@@ -37,7 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',  # 계정 생성 및 로그인
+    'facilities',  # 시설 및 서비스 관리 앱
+    'centers', # 이동 지원 센터
+    'search', # 
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,23 +84,30 @@ WSGI_APPLICATION = 'database_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # MySQL 백엔드 사용
+        'NAME': 'project_db',         # 사용하려는 데이터베이스 이름 (예: database_project)
+        'USER': 'root',                       # MySQL 사용자
+        'PASSWORD': 'ehdrnr1228',          # MySQL root 비밀번호 (4자리)
+        'HOST': '127.0.0.1',                  # 로컬 호스트 (localhost)
+        'PORT': '3306',                       # MySQL 기본 포트
+        'OPTIONS': {
+            'ssl': {
+                'ssl-ca': None,  # SSL 사용 시 추가적인 인증서가 필요한 경우 설정
+            }
+        }
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'database_project',
-#         'USER': 'root',
-#         'PASSWORD': 'your_mysql_password',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
-#     }
-# }
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # Password validation
@@ -110,6 +128,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Simple JWT 설정
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
